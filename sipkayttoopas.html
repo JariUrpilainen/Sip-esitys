@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIP Käyttöopas</title>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  /* ── ICTU-paletti ───────────────────────────────────────────────────
+     Värit jari.urpilainen.fi -sivuston tokeneista:
+     paper (lämmin vaalea) · ink · frost (viileä harmaa) ·
+     aurora (mintunvihreä aksentti) · signal (sininen infoväri).
+     Vaalea teema käyttää sivuston vaaleaa tilaa, tumma sen night-sävyjä. */
+  :root {
+    --ground:      #FAFAF7;  /* paper-50  */
+    --surface:     #FFFFFF;
+    --surface-alt: #F1F1EC;  /* paper-100 */
+    --ink:         #101418;  /* ink-900   */
+    --ink-soft:    #3D4550;  /* ink-600   */
+    --ink-faint:   #5A6472;  /* ink-500 — frost-400 jäisi paperilla liian vaaleaksi */
+    --rule:        #E6E6DF;  /* paper-200 */
+    --rule-strong: #B4BDC9;  /* frost-300 */
+    --accent:      #1F6E52;  /* aurora-dim */
+    --accent-soft: #E3F3EC;
+    --info:        #3A68D6;  /* signal, tummennettu vaaleaa taustaa varten */
+    --info-soft:   #E8ECF2;  /* frost-100 */
+    --warn:        #8A6320;
+    --warn-soft:   #F5ECDC;
+    --shadow:      0 4px 16px -4px rgba(16, 20, 24, .05), 0 24px 64px -16px rgba(16, 20, 24, .10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0A0D13;  /* night-850 */
+      --surface:     #0C0F16;  /* night-800 */
+      --surface-alt: #141926;  /* night-700 */
+      --ink:         #E8ECF2;  /* frost-100 */
+      --ink-soft:    #B4BDC9;  /* frost-300 */
+      --ink-faint:   #8B96A5;  /* frost-400 */
+      --rule:        #1E2537;  /* night-600 */
+      --rule-strong: #4D5666;  /* frost-600 */
+      --accent:      #4FD1A5;  /* aurora    */
+      --accent-soft: #0F2B22;
+      --info:        #6E9BFF;  /* signal    */
+      --info-soft:   #141D33;
+      --warn:        #D9A45C;
+      --warn-soft:   #241C11;
+      --shadow:      0 4px 16px -4px rgba(0, 0, 0, .5), 0 24px 64px -16px rgba(0, 0, 0, .75);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0A0D13;
+    --surface:     #0C0F16;
+    --surface-alt: #141926;
+    --ink:         #E8ECF2;
+    --ink-soft:    #B4BDC9;
+    --ink-faint:   #8B96A5;
+    --rule:        #1E2537;
+    --rule-strong: #4D5666;
+    --accent:      #4FD1A5;
+    --accent-soft: #0F2B22;
+    --info:        #6E9BFF;
+    --info-soft:   #141D33;
+    --warn:        #D9A45C;
+    --warn-soft:   #241C11;
+    --shadow:      0 4px 16px -4px rgba(0, 0, 0, .5), 0 24px 64px -16px rgba(0, 0, 0, .75);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Rakenne ───────────────────────────────────────────────────────── */
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px 96px;
+  }
+
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: 56px 0 36px;
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 14px;
+  }
+
+  h1 {
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.1rem, 5vw, 3.05rem);
+    line-height: 1.04;
+    letter-spacing: -.022em;
+    text-wrap: balance;
+    margin: 0 0 18px;
+  }
+
+  .standfirst {
+    font-size: 1.16rem;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 224px minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* ── Sisällysluettelo ──────────────────────────────────────────────── */
+  .toc {
+    position: sticky;
+    top: 24px;
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.35;
+  }
+
+  .toc h2 {
+    /* Nollaa osio-otsikoilta peritty yläviiva ja tila. */
+    border-top: 0;
+    padding-top: 0;
+    font-size: 11.5px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    line-height: 1.3;
+    margin: 0 0 14px;
+  }
+
+  .toc ol, .toc ul { list-style: none; margin: 0; padding: 0; }
+  .toc li { margin-bottom: 9px; }
+
+  .toc a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    display: flex;
+    gap: 9px;
+    border-left: 2px solid transparent;
+    padding-left: 10px;
+    margin-left: -12px;
+  }
+
+  .toc a:hover, .toc a:focus-visible {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  .toc .num {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    padding-top: 1px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .toc-group + .toc-group { margin-top: 24px; }
+
+  /* ── Leipäteksti ───────────────────────────────────────────────────── */
+  main { max-width: 68ch; }
+
+  section { scroll-margin-top: 24px; }
+  section + section { margin-top: 60px; }
+
+  h2 {
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 600;
+    font-size: 1.62rem;
+    letter-spacing: -.014em;
+    line-height: 1.2;
+    text-wrap: balance;
+    margin: 0 0 6px;
+    padding-top: 14px;
+    border-top: 2px solid var(--ink);
+  }
+
+  h3 {
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 600;
+    font-size: 1.08rem;
+    letter-spacing: -.006em;
+    margin: 34px 0 8px;
+  }
+
+  .stage-tag {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+    display: block;
+  }
+
+  p { margin: 0 0 16px; }
+  main > section > p:first-of-type { margin-top: 14px; }
+
+  a { color: var(--accent); }
+
+  strong { font-weight: 600; }
+
+  ul, ol { margin: 0 0 16px; padding-left: 1.3em; }
+  li { margin-bottom: 7px; }
+  li::marker { color: var(--ink-faint); }
+
+  code, .mono {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: .86em;
+  }
+
+  code {
+    background: var(--surface-alt);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: .09em .34em;
+    white-space: nowrap;
+  }
+
+  pre {
+    background: var(--surface-alt);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+
+  pre code {
+    background: none;
+    border: 0;
+    padding: 0;
+    white-space: pre;
+    font-size: 13px;
+  }
+
+  /* ── Taulukot ──────────────────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 0 0 18px; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    border-bottom: 1.5px solid var(--rule-strong);
+    padding: 0 14px 8px 0;
+    white-space: nowrap;
+  }
+
+  td {
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 14px 10px 0;
+    vertical-align: top;
+    color: var(--ink);
+  }
+
+  td:last-child, th:last-child { padding-right: 0; }
+
+  /* ── Huomiolaatikot ────────────────────────────────────────────────── */
+  .note {
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--ink-faint);
+    background: var(--surface);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+    font-size: .96rem;
+  }
+
+  .note p:last-child { margin-bottom: 0; }
+
+  .note-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .note.privacy { border-left-color: var(--info); background: var(--info-soft); }
+  .note.privacy .note-label { color: var(--info); }
+  .note.tip { border-left-color: var(--accent); background: var(--accent-soft); }
+  .note.tip .note-label { color: var(--accent); }
+  .note.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+  .note.warn .note-label { color: var(--warn); }
+
+  /* ── Kuvat ─────────────────────────────────────────────────────────── */
+  figure {
+    margin: 26px 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px 20px 16px;
+    box-shadow: var(--shadow);
+  }
+
+  figure svg { display: block; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+
+  figcaption {
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+
+  /* ── Sähköpostikomennot ────────────────────────────────────────────── */
+  .cmd-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 18px;
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .cmd-list li {
+    background: var(--surface);
+    margin: 0;
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: minmax(150px, 210px) 1fr;
+    gap: 16px;
+    align-items: baseline;
+  }
+
+  .cmd-list .cmd {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .cmd-list .what { font-size: .94rem; color: var(--ink); }
+
+  /* ── Roolikortit ───────────────────────────────────────────────────── */
+  .roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin: 0 0 18px;
+  }
+
+  .role {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 15px 16px;
+  }
+
+  .role h4 {
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 5px;
+  }
+
+  .role p { font-size: .9rem; color: var(--ink-soft); margin: 0; }
+
+  /* ── Loppu ─────────────────────────────────────────────────────────── */
+  .colophon {
+    margin-top: 72px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .colophon p { margin: 0; }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+  }
+
+  .brand .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .brand a {
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-decoration: none;
+    color: var(--accent);
+  }
+
+  .brand a:hover { text-decoration: underline; }
+  .brand .author { color: var(--ink-soft); }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    html { scroll-behavior: auto; }
+  }
+
+  html { scroll-behavior: smooth; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 32px; }
+    .toc { position: static; border-bottom: 1px solid var(--rule); padding-bottom: 24px; }
+    .toc-nav { display: block; }
+    .toc-nav ul, .toc-nav ol { columns: 2; column-gap: 20px; }
+    .toc-nav li { break-inside: avoid; }
+    .cmd-list li { grid-template-columns: 1fr; gap: 4px; }
+    .masthead { padding-top: 36px; }
+  }
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <p class="eyebrow">Käyttöopas · versio 0.1</p>
+    <h1>SIP&nbsp;— Signal Intelligence Platform</h1>
+    <p class="standfirst">
+      Miten havainto kentältä muuttuu toimenpiteeksi, tulokseksi ja mitattavaksi
+      vaikutukseksi — ja miksi järjestelmä muuttuu sitä arvokkaammaksi mitä
+      kauemmin sitä käytetään.
+    </p>
+  </header>
+
+  <div class="layout">
+
+    <nav class="toc" aria-label="Sisällys">
+      <h2>Sisällys</h2>
+      <div class="toc-nav">
+        <div class="toc-group">
+          <ul>
+            <li><a href="#idea">Perusajatus</a></li>
+            <li><a href="#roolit">Roolit ja näkyvyys</a></li>
+          </ul>
+        </div>
+
+        <div class="toc-group">
+          <h2>Signaalin polku</h2>
+          <ol>
+            <li><a href="#kirjaa"><span class="num">01</span><span>Kirjaa signaali</span></a></li>
+            <li><a href="#analyysi"><span class="num">02</span><span>Analysoi tekoälyllä</span></a></li>
+            <li><a href="#tarkastus"><span class="num">03</span><span>Tarkasta ja hyväksy</span></a></li>
+            <li><a href="#toimenpiteet"><span class="num">04</span><span>Jaa toimenpiteet</span></a></li>
+            <li><a href="#tulos"><span class="num">05</span><span>Kirjaa tulos</span></a></li>
+          </ol>
+        </div>
+
+        <div class="toc-group">
+          <ul>
+            <li><a href="#tietopankki">Tietopankki</a></li>
+            <li><a href="#sahkoposti">Sähköpostityönkulku</a></li>
+            <li><a href="#kojelauta">Kojelauta</a></li>
+            <li><a href="#raportit">Raportit</a></li>
+            <li><a href="#asetukset">Omat asetukset</a></li>
+            <li><a href="#yllapito">Ylläpitäjälle</a></li>
+            <li><a href="#tietosuoja">Tietosuoja</a></li>
+            <li><a href="#ukk">Usein kysyttyä</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+
+      <!-- ── Perusajatus ────────────────────────────────────────────── -->
+      <section id="idea">
+        <h2>Perusajatus</h2>
+
+        <p>
+          Ammattiopistoissa, korkeakouluissa ja kunnissa syntyy jatkuvasti heikkoja
+          signaaleja: yritys mainitsee ohimennen osaamistarpeen, opettaja huomaa
+          puutteen opetussuunnitelmassa, hanketyöntekijä törmää samaan ongelmaan
+          kolmannen kerran. Näistä havainnoista vain osa päätyy kenenkään pöydälle,
+          ja vielä pienempi osa muuttuu tekemiseksi.
+        </p>
+
+        <p>
+          SIP on putki, joka vie havainnon läpi viiden vaiheen — vastaanotto,
+          analyysi, tarkastus, toimenpide, tulos — ja tallentaa lopputuloksen
+          <strong>tietopankkiin</strong>. Kun seuraava samaa aihetta koskeva
+          signaali saapuu, järjestelmä näyttää heti mitä asiasta on jo tehty.
+          Kehä sulkeutuu, eikä samaa työtä tehdä kahdesti.
+        </p>
+
+        <figure>
+          <svg viewBox="0 0 720 274" role="img" aria-label="Signaali kulkee analyysin, toimenpiteen ja tuloksen kautta vaikutukseksi. Tulos tallentuu tietopankkiin, joka syöttää aiemmat ratkaisut takaisin uuden signaalin analyysiin.">
+            <defs>
+              <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"/>
+              </marker>
+              <marker id="ah-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--accent)"/>
+              </marker>
+            </defs>
+
+            <g font-family="Archivo, Helvetica, Arial, sans-serif" font-size="12.5" fill="currentColor">
+
+              <!-- Ylärivi: putki -->
+              <rect x="8"   y="42" width="112" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="64"  y="67" text-anchor="middle">Signaali</text>
+
+              <rect x="160" y="42" width="112" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="216" y="67" text-anchor="middle">Analyysi</text>
+
+              <rect x="312" y="42" width="112" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="368" y="67" text-anchor="middle">Toimenpide</text>
+
+              <rect x="464" y="42" width="112" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="520" y="67" text-anchor="middle">Tulos</text>
+
+              <rect x="616" y="42" width="96"  height="40" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="664" y="67" text-anchor="middle">Vaikutus</text>
+
+              <!-- Nuolet putkessa -->
+              <line x1="120" y1="62" x2="152" y2="62" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/>
+              <line x1="272" y1="62" x2="304" y2="62" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/>
+              <line x1="424" y1="62" x2="456" y2="62" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/>
+              <line x1="576" y1="62" x2="608" y2="62" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah)"/>
+
+              <!-- Tietopankki -->
+              <rect x="160" y="182" width="416" height="48" rx="4" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+              <text x="368" y="203" text-anchor="middle" fill="var(--accent)" font-weight="600">TIETOPANKKI</text>
+              <text x="368" y="220" text-anchor="middle" fill="currentColor" font-size="11">opinnäytetyöt · hanketulokset · toimintamallit · ratkaistut signaalit</text>
+
+              <!-- Tulos → tietopankki (korjuu) -->
+              <line x1="520" y1="82" x2="520" y2="176" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ah-accent)"/>
+              <text x="530" y="136" fill="var(--accent)" font-size="11">tallentuu</text>
+
+              <!-- Tietopankki → analyysi (haku) -->
+              <line x1="216" y1="182" x2="216" y2="88" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ah-accent)"/>
+              <text x="226" y="136" fill="var(--accent)" font-size="11">&#8221;tästä on jo tehty&#8221;</text>
+
+              <!-- Ulkoiset lähteet -->
+              <line x1="368" y1="256" x2="368" y2="236" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#ah)"/>
+              <text x="368" y="270" text-anchor="middle" font-size="10.5" fill="currentColor">Finna · Theseus · research.fi · CSV</text>
+            </g>
+          </svg>
+          <figcaption>
+            Suljettu kehä. Korostettu reitti on takaisinkytkentä: jokainen kirjattu tulos
+            tallentuu tietopankkiin, ja tietopankki syöttää aiemmat ratkaisut takaisin
+            seuraavan signaalin analyysiin.
+          </figcaption>
+        </figure>
+
+        <h3>Seurantatunnus</h3>
+        <p>
+          Jokainen signaali saa tunnuksen muotoa <code>SIG-040626-0005-00</code>:
+          päivämäärä, juokseva numero ja kaksi viimeistä merkkiä. Signaalin
+          jälkiliite on aina <code>-00</code>; sen toimenpiteet numeroidaan
+          <code>-01</code>, <code>-02</code> ja niin edelleen. Tunnus kulkee mukana
+          sähköpostien otsikoissa, joten vastaus osuu oikeaan kohteeseen ilman
+          että kukaan kirjautuu järjestelmään.
+        </p>
+      </section>
+
+      <!-- ── Roolit ─────────────────────────────────────────────────── -->
+      <section id="roolit">
+        <h2>Roolit ja näkyvyys</h2>
+
+        <p>
+          Rooli tulee organisaatiojäsenyydestä. Sama henkilö voi kuulua useaan
+          organisaatioon eri roolilla.
+        </p>
+
+        <div class="roles">
+          <div class="role">
+            <h4>Pääkäyttäjä</h4>
+            <p>Näkee kaiken, tarkastaa AI-analyysit, ylläpitää tietopankkia ja ajaa ilmoitukset.</p>
+          </div>
+          <div class="role">
+            <h4>Organisaation admin ja johtaja</h4>
+            <p>Hallitsee oman organisaationsa sisältöä, näkee myös sen yksityiset signaalit.</p>
+          </div>
+          <div class="role">
+            <h4>Opettaja, tutkija, projektihenkilö</h4>
+            <p>Kirjaa signaaleja, hoitaa toimenpiteitä ja kirjaa tuloksia.</p>
+          </div>
+          <div class="role">
+            <h4>Opiskelija ja lukija</h4>
+            <p>Näkee julkiset ja oman organisaation signaalit sekä tietopankin.</p>
+          </div>
+        </div>
+
+        <h3>Kuka näkee signaalin</h3>
+        <p>Näkyvyys valitaan signaalia kirjattaessa:</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Näkyvyys</th><th>Kuka näkee</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Julkinen</td><td>Kaikki kirjautuneet käyttäjät</td></tr>
+              <tr><td>Organisaatio</td><td>Signaalin oman organisaation jäsenet</td></tr>
+              <tr><td>Valitut organisaatiot</td><td>Oma organisaatio ja erikseen liitetyt organisaatiot</td></tr>
+              <tr><td>Yksityinen</td><td>Kirjaaja ja organisaation hallintarooli</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note privacy">
+          <span class="note-label">Tietosuoja</span>
+          <p>
+            Luottamukselliseksi tai henkilötiedoksi luokiteltu signaali ei näy oman
+            organisaation ulkopuolelle, vaikka näkyvyydeksi olisi vahingossa valittu
+            julkinen. Luokitus voittaa näkyvyysasetuksen.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── 01 Kirjaa ──────────────────────────────────────────────── -->
+      <section id="kirjaa">
+        <span class="stage-tag">Vaihe 01</span>
+        <h2>Kirjaa signaali</h2>
+
+        <p>
+          <strong>Signaalit → Uusi signaali.</strong> Kirjaa havainto heti kun se
+          tulee vastaan — keskeneräinen kirjaus on parempi kuin unohtunut havainto.
+        </p>
+
+        <ul>
+          <li><strong>Otsikko ja kuvaus.</strong> Kuvaus kannattaa kirjoittaa vähintään muutaman lauseen mittaiseksi: sekä tekoäly että tietopankin haku toimivat sitä paremmin mitä enemmän asiasanoja tekstissä on.</li>
+          <li><strong>Lähde.</strong> Mistä havainto tuli — yritys, opettaja, opiskelija, media. Tätä käytetään nousevien teemojen tunnistuksessa: sama aihe useasta eri lähdetyypistä on vahvempi signaali kuin sama aihe yhdeltä henkilöltä.</li>
+          <li><strong>Kiireellisyys ja luottavuusaste.</strong> Oma arviosi. Luottavuus kertoo kuinka varma olet havainnon paikkansapitävyydestä.</li>
+          <li><strong>Tietoluokitus.</strong> Ohjaa sekä näkyvyyttä että sitä, mikä tekoäly signaalia saa käsitellä.</li>
+          <li><strong>Alkuperä.</strong> Syntyikö havainto projektissa tai verkostossa — kytkentä auttaa kohdistamaan toimenpiteet oikealle taholle.</li>
+        </ul>
+
+        <h3>Kaksoiskappalevaroitus</h3>
+        <p>
+          Kun kirjoitat otsikkoa, järjestelmä etsii taustalla samankaltaisia jo
+          kirjattuja signaaleja ja näyttää ne keltaisessa laatikossa. Sama havainto
+          kirjataan usein moneen kertaan eri henkilöiden toimesta — tarkista lista
+          ennen tallennusta. Voit silti jatkaa kirjaamista, jos kyse on eri asiasta.
+        </p>
+
+        <div class="note tip">
+          <span class="note-label">Vinkki</span>
+          <p>
+            Signaalin voi kirjata myös <strong>sähköpostilla</strong> ilman kirjautumista.
+            Otsikosta tulee signaalin otsikko ja viestistä kuvaus. Katso
+            <a href="#sahkoposti">Sähköpostityönkulku</a>.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── 02 Analyysi ────────────────────────────────────────────── -->
+      <section id="analyysi">
+        <span class="stage-tag">Vaihe 02</span>
+        <h2>Analysoi tekoälyllä</h2>
+
+        <p>
+          Avaa signaali ja paina <strong>Analysoi tekoälyllä</strong>. Analyysi
+          tuottaa tiivistelmän, toimialat, sidosryhmät, mahdollisuudet, riskit ja
+          neljästä kahdeksaan konkreettista toimenpide-ehdotusta. Ehdotukset ovat
+          muotoa <span class="mono">[Tyyppi] Tehtävä — tulos: … — peruste: …</span>
+          ja niissä on valmiiksi ehdotettu organisaatio, projekti ja vastuuhenkilö.
+        </p>
+
+        <h3>Älä keksi pyörää uudelleen</h3>
+        <p>
+          Ennen analyysia järjestelmä hakee tietopankista aiheeseen liittyvät
+          aiemmat ratkaisut ja antaa ne tekoälylle taustatiedoksi. Jos aiheesta on
+          jo tehty opinnäytetyö tai toimintamalli, analyysi kertoo sen omassa
+          lohkossaan ja ehdottaa olemassa olevan hyödyntämistä uuden tekemisen
+          sijaan.
+        </p>
+
+        <div class="note privacy">
+          <span class="note-label">Tietosuoja</span>
+          <p>
+            Luottamuksellinen aineisto, henkilötiedot ja organisaation sisäinen tieto
+            käsitellään <strong>aina paikallisella mallilla</strong> (Ollama) omalla
+            palvelimella. Pilvimallia käytetään vain jos organisaatio on erikseen
+            sallinut sen <em>ja</em> aineisto on julkista tai yleistä. Signaalin tekstiä
+            ei myöskään koskaan lähetetä ulkopuolisiin hakupalveluihin.
+          </p>
+        </div>
+
+        <p>
+          Analyysin jälkeen signaali siirtyy tilaan <strong>Arvioinnissa</strong> ja
+          odottaa pääkäyttäjän tarkastusta.
+        </p>
+      </section>
+
+      <!-- ── 03 Tarkastus ───────────────────────────────────────────── -->
+      <section id="tarkastus">
+        <span class="stage-tag">Vaihe 03</span>
+        <h2>Tarkasta ja hyväksy</h2>
+
+        <p>
+          Tekoäly ehdottaa, ihminen päättää. Pääkäyttäjä näkee signaalisivulla
+          tarkastuspaneelin ja valitsee yhden kolmesta:
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Valinta</th><th>Vaikutus</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Hyväksy</td><td>Signaali siirtyy tilaan <em>Aktiivinen</em>, toimenpiteet voidaan luoda</td></tr>
+              <tr><td>Pyydä lisätietoa</td><td>Signaali merkitään <em>Eskaloiduksi</em> ja palautuu käsittelyyn</td></tr>
+              <tr><td>Hylkää</td><td>Signaali arkistoidaan; se säilyy historiassa</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Kaikki tarkastuspäätökset perusteluineen kirjautuvat signaalin aikajanalle,
+          joten polku havainnosta päätökseen on jälkikäteen todennettavissa.
+        </p>
+      </section>
+
+      <!-- ── 04 Toimenpiteet ────────────────────────────────────────── -->
+      <section id="toimenpiteet">
+        <span class="stage-tag">Vaihe 04</span>
+        <h2>Jaa toimenpiteet</h2>
+
+        <p>
+          Hyväksytyt toimenpide-ehdotukset muutetaan varsinaisiksi toimenpiteiksi
+          yhdellä klikkauksella. Jokainen saa oman seurantatunnuksensa
+          (<code>SIG-040626-0005-01</code>), vastuuhenkilön, organisaation ja
+          määräpäivän.
+        </p>
+
+        <h3>Lähetystavat</h3>
+        <p>Toimenpide lähetetään eteenpäin valitulla tarkoituksella:</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Tapa</th><th>Mitä vastaanottajalta odotetaan</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Toteutettavaksi</td><td>Tee tehtävä ja kuittaa valmiiksi</td></tr>
+              <tr><td>Selvitettäväksi</td><td>Ota selvää ja raportoi mitä löytyi</td></tr>
+              <tr><td>Kommentoitavaksi</td><td>Arvioi ja kommentoi, ei toteutusvastuuta</td></tr>
+              <tr><td>Vastuutettavaksi</td><td>Nimeä oikea tekijä</td></tr>
+              <tr><td>Tiedoksi</td><td>Ei odoteta vastausta</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Lähetettäessä syntyy vastaanottajalle henkilökohtainen kuittauslinkki.
+          Linkin takana on lomake, jossa hän valitsee tilanteen —
+          <em>Valmis</em>, <em>Työ jatkuu</em>, <em>Siirretään eteenpäin</em>,
+          <em>Tarvitsen lisätietoa</em> tai <em>Ei toimenpiteitä</em> — ja kirjaa
+          lyhyen vastauksen. Vastauksesta syntyy tulos signaalille.
+          <strong>Kuittaaminen ei vaadi kirjautumista.</strong>
+        </p>
+
+        <p>
+          Kun kaikki vastuuhenkilöt ovat kuitanneet, toimenpide merkitään
+          automaattisesti valmiiksi.
+        </p>
+
+        <div class="note tip">
+          <span class="note-label">Muistutukset</span>
+          <p>
+            Vastuuhenkilö saa sähköposti-ilmoituksen heti kun toimenpide osoitetaan
+            hänelle, muistutuksen kolme päivää ennen määräpäivää ja uuden viestin jos
+            määräpäivä ohitetaan.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── 05 Tulos ───────────────────────────────────────────────── -->
+      <section id="tulos">
+        <span class="stage-tag">Vaihe 05</span>
+        <h2>Kirjaa tulos ja vaikutus</h2>
+
+        <p>
+          Kun signaalista on syntynyt jotain konkreettista, paina signaalisivulla
+          <strong>Kirjaa tulos</strong>. Valitse tulostyyppi: koulutusohjelma,
+          tutkimushanke, rahoitushakemus, pilotti, kumppanuus, opiskelijaprojekti,
+          <strong>opinnäytetyö</strong>, julkaisu tai toimintamuutos.
+        </p>
+
+        <h3>Julkaise tietopankkiin</h3>
+        <p>
+          Tuloslomakkeessa on rasti <strong>Julkaise tietopankkiin</strong>. Se on
+          valmiiksi päällä uudelleenkäytettäville tuotoksille — opinnäytetyö,
+          julkaisu, pilotti, koulutus, toimintamalli — ja pois päältä hallinnollisilta
+          kirjauksilta kuten rahoitushakemukselta ja kumppanuudelta.
+        </p>
+
+        <p>
+          <strong>Tämä rasti on koko takaisinkytkennän moottori.</strong> Ilman sitä
+          tietopankki ei täyty, ja seuraava samaa aihetta koskeva signaali aloittaa
+          taas tyhjästä. Lisää myös linkki tuotokseen, jos sellainen on.
+        </p>
+
+        <h3>Vaikutuksen mittarit</h3>
+        <p>
+          Tulokselle voi kirjata vaikutuksen ja siihen numeeriset mittarit:
+          opiskelijamäärä, taloudellinen arvo, kumppanien määrä ja
+          <strong>säästetty työaika päivinä</strong>. Viimeinen on arvio siitä,
+          kuinka paljon aiemman tiedon hyödyntäminen nopeutti työtä — se summautuu
+          vaikuttavuusraporttiin.
+        </p>
+
+        <p>
+          Kun signaali merkitään valmiiksi, myös sen ratkaisutapa tallentuu
+          tietopankkiin, vaikka erillistä tulosta ei olisi kirjattu.
+        </p>
+      </section>
+
+      <!-- ── Tietopankki ────────────────────────────────────────────── -->
+      <section id="tietopankki">
+        <h2>Tietopankki</h2>
+
+        <p>
+          Tietopankki kokoaa yhteen sen, mitä on jo tehty: opinnäytetyöt,
+          hanketulokset, toimintamallit, materiaalit, pilotit, julkaisut, avoimet
+          opinnäytetyöaiheet ja aiemmin ratkaistut signaalit.
+        </p>
+
+        <h3>Signaalisivulla</h3>
+        <p>
+          Osiossa <strong>Aiemmat ratkaisut ja tietopohja</strong> näkyy viisi
+          osuvinta kohdetta osuvuusprosentteineen ja perusteluineen. Kustakin näet
+          tyypin, vuoden, tekijät ja linkin lähteeseen.
+        </p>
+
+        <ul>
+          <li><strong>Liitä</strong> kytkee kohteen signaaliin.</li>
+          <li><strong>Peukku ylös</strong> merkitsee kohteen hyödylliseksi — se nousee jatkossa vastaavissa hauissa.</li>
+          <li><strong>Peukku alas</strong> merkitsee sen epäolennaiseksi — se laskee jatkossa.</li>
+        </ul>
+
+        <p>
+          Arviot eivät ole pelkkää siivousta: ne ohjaavat hakua, joten tietopankki
+          tarkentuu käytön myötä. Hyödylliseksi merkityt kytkennät ovat myös se
+          luku, josta uudelleenkäyttöaste lasketaan.
+        </p>
+
+        <h3>Tietopankki-sivu</h3>
+        <p>
+          Vasemman valikon <strong>Tietopankki</strong> avaa koko kokoelman. Voit
+          hakea vapaalla tekstillä sekä suodattaa tyypin ja lähteen mukaan. Haku
+          ymmärtää suomen taivutusmuodot: <em>hitsauksen</em> löytää myös
+          <em>hitsaus</em>-aiheiset kohteet.
+        </p>
+
+        <p>
+          <strong>Lisää kohde</strong> -painikkeella voit kirjata minkä tahansa
+          ratkaisun käsin. Jos jätät avainsanat tyhjiksi, ne johdetaan otsikosta ja
+          tiivistelmästä.
+        </p>
+
+        <h3>Opinnäytetyöaiheet</h3>
+        <p>
+          Kohdetyyppi <em>Opinnäytetyöaihe</em> toimii aihepankkina opiskelijoille.
+          Kun aiheesta valmistuu työ, sama kohde päivitetään tyypiksi
+          <em>Opinnäytetyö</em>. Näin näkyy suoraan, mistä signaalista aihe syntyi ja
+          mitä siitä lopulta seurasi.
+        </p>
+      </section>
+
+      <!-- ── Sähköposti ─────────────────────────────────────────────── -->
+      <section id="sahkoposti">
+        <h2>Sähköpostityönkulku</h2>
+
+        <p>
+          Suurin osa niistä, joiden havainnot ovat arvokkaimpia, ei kirjaudu
+          järjestelmään koskaan. Siksi SIP toimii myös pelkällä sähköpostilla.
+        </p>
+
+        <figure>
+          <svg viewBox="0 0 700 210" role="img" aria-label="Saapuva sähköposti tarkistetaan seurantatunnuksen varalta. Jos otsikossa on toimenpiteen tunnus, viesti kirjataan toimenpiteen tulokseksi; muuten siitä luodaan uusi signaali.">
+            <defs>
+              <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"/>
+              </marker>
+            </defs>
+
+            <g font-family="Archivo, Helvetica, Arial, sans-serif" font-size="12.5" fill="currentColor">
+
+              <rect x="8" y="80" width="120" height="42" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="68" y="99" text-anchor="middle">Saapuva</text>
+              <text x="68" y="114" text-anchor="middle">sähköposti</text>
+
+              <!-- Päätöskohta -->
+              <path d="M 260 74 L 320 101 L 260 128 L 200 101 Z" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="260" y="97" text-anchor="middle" font-size="11" fill="var(--accent)">Onko otsikossa</text>
+              <text x="260" y="111" text-anchor="middle" font-size="11" fill="var(--accent)">tunnus?</text>
+
+              <line x1="128" y1="101" x2="192" y2="101" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah2)"/>
+
+              <!-- Kyllä -->
+              <line x1="260" y1="74" x2="260" y2="42" stroke="currentColor" stroke-width="1.4"/>
+              <line x1="260" y1="42" x2="452" y2="42" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah2)"/>
+              <text x="268" y="60" font-size="11">kyllä · SIG-…-01</text>
+
+              <rect x="460" y="20" width="232" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="576" y="39" text-anchor="middle">Kirjataan toimenpiteen</text>
+              <text x="576" y="54" text-anchor="middle">tulokseksi</text>
+
+              <!-- Ei -->
+              <line x1="260" y1="128" x2="260" y2="162" stroke="currentColor" stroke-width="1.4"/>
+              <line x1="260" y1="162" x2="452" y2="162" stroke="currentColor" stroke-width="1.4" marker-end="url(#ah2)"/>
+              <text x="268" y="180" font-size="11">ei tunnusta</text>
+
+              <rect x="460" y="140" width="232" height="44" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <text x="576" y="159" text-anchor="middle">Luodaan uusi signaali</text>
+              <text x="576" y="174" text-anchor="middle" font-size="11">otsikko + kuvaus viestistä</text>
+            </g>
+          </svg>
+          <figcaption>
+            Saapuvan viestin reititys. Alkuperäinen viesti tallennetaan aina myös
+            liitteeksi, joten kirjausketju säilyy.
+          </figcaption>
+        </figure>
+
+        <h3>Komennot vastausviestissä</h3>
+        <p>
+          Kun vastaat toimenpideviestiin, viestin sisältö ohjaa käsittelyä. Riittää
+          että kirjoitat jonkin näistä:
+        </p>
+
+        <ul class="cmd-list">
+          <li>
+            <span class="cmd">Valmis</span>
+            <span class="what">Merkitsee toimenpiteen valmiiksi. Toimii myös sanoilla <em>tehty</em>, <em>valmistui</em>, <em>hyväksytty</em>, <em>päätetty</em>.</span>
+          </li>
+          <li>
+            <span class="cmd">Siirrä: nimi@org.fi</span>
+            <span class="what">Siirtää toimenpiteen toiselle henkilölle. Toimii myös muodoilla <em>Kenelle:</em> ja <em>Seuraava:</em>.</span>
+          </li>
+          <li>
+            <span class="cmd">vapaa teksti</span>
+            <span class="what">Kirjautuu toimenpiteen tulokseksi sellaisenaan.</span>
+          </li>
+        </ul>
+
+        <p>
+          Lainatut viestiketjut ja allekirjoitukset karsitaan automaattisesti, joten
+          voit vastata normaalisti ilman siivoamista.
+        </p>
+
+        <div class="note warn">
+          <span class="note-label">Edellyttää</span>
+          <p>
+            Sähköpostiliikenne vaatii, että ylläpitäjä on määrittänyt vastaanottavan
+            osoitteen ja SMTP-asetukset. Ilman niitä viestit kirjautuvat järjestelmään
+            mutta niitä ei lähetetä — työnkulkua voi silti kokeilla.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── Kojelauta ──────────────────────────────────────────────── -->
+      <section id="kojelauta">
+        <h2>Kojelauta</h2>
+
+        <p>Kojelauta vastaa kahteen kysymykseen: mikä on tilanne, ja mihin kannattaa tarttua.</p>
+
+        <h3>Nousevat teemat</h3>
+        <p>
+          Yksittäinen heikko signaali on helppo ohittaa. Arvo syntyy siitä, että sama
+          aihe toistuu eri lähteistä lyhyen ajan sisällä. Kojelauta nostaa esiin
+          teemat, joista on tullut vähintään kolme havaintoa vähintään kahdesta eri
+          lähdetyypistä viimeisen kolmen kuukauden aikana, ja kertoo kasvukertoimen
+          edelliseen jaksoon verrattuna.
+        </p>
+
+        <p>
+          Jokaisen teeman kohdalla kerrotaan myös, <strong>löytyykö tietopankista jo
+          ratkaisuja</strong> — vihreä teksti tarkoittaa että aiheesta on aiempaa
+          työtä, keltainen että ei ole.
+        </p>
+
+        <h3>Tiedon uudelleenkäyttö</h3>
+        <p>
+          Kortti näyttää yhden luvun: kuinka moni päätökseen viety signaali nojasi
+          olemassa olevaan tietoon. Luku lasketaan hyödyllisiksi merkityistä
+          tietopankkikytkennöistä. Sen vieressä näkyy tietopankin koko, kuinka moni
+          kohde on syntynyt omista tuloksista, ja kirjattu työaikasäästö.
+        </p>
+
+        <div class="note tip">
+          <span class="note-label">Miksi tämä luku</span>
+          <p>
+            Uudelleenkäyttöaste on se asia, jota rahoittajaraportissa ei yleensä pystytä
+            osoittamaan lainkaan. Se on myös suora mittari sille, tuottaako tietopankki
+            hyötyä vai kerääkö se vain pölyä.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── Raportit ───────────────────────────────────────────────── -->
+      <section id="raportit">
+        <h2>Raportit</h2>
+
+        <p>
+          <strong>Tulokset</strong>-sivun yläreunasta löytyy kaksi vientiä:
+        </p>
+
+        <ul>
+          <li><strong>Vaikuttavuusraportti</strong> avautuu selaimeen tulostettavana sivuna. Se sisältää uudelleenkäyttömittarit ja taulukon kaikista tuloksista, vaikutuksista ja niissä hyödynnetystä aiemmasta tiedosta. Tulosta selaimen tulostustoiminnolla, jos tarvitset PDF:n.</li>
+          <li><strong>CSV</strong> lataa saman aineiston taulukkolaskentaan.</li>
+        </ul>
+
+        <p>
+          Raportti kattaa oletuksena viimeiset 12 kuukautta ja näyttää vain ne
+          signaalit, joihin sinulla on oikeus.
+        </p>
+      </section>
+
+      <!-- ── Asetukset ──────────────────────────────────────────────── -->
+      <section id="asetukset">
+        <h2>Omat asetukset</h2>
+
+        <p>
+          <strong>Asetukset</strong>-sivulla näet profiilisi ja organisaatioroolisi
+          sekä säädät kaksi asiaa:
+        </p>
+
+        <ul>
+          <li><strong>Tekoälymalli.</strong> Ensisijainen valintasi. Tietoluokitus voi silti pakottaa paikallisen mallin käytön.</li>
+          <li><strong>Ilmoitukset.</strong> Sähköposti-ilmoitukset toimenpiteistä ja määräpäivistä sekä viikkokoonti avoimista tehtävistä, uusista signaaleista ja tietopankin uutuuksista.</li>
+        </ul>
+
+        <p>
+          Sivun alalaidassa näkyy järjestelmätiedot: käytössä oleva tekoälypalvelin,
+          onko semanttinen haku päällä ja onko sähköpostin lähetys määritetty.
+        </p>
+      </section>
+
+      <!-- ── Ylläpito ───────────────────────────────────────────────── -->
+      <section id="yllapito">
+        <h2>Ylläpitäjälle</h2>
+
+        <h3>Tietopankin täydentäminen ulkoisista lähteistä</h3>
+        <p>
+          Tietopankki-sivun <strong>Tuo aineistoa</strong> -paneelista käynnistetään
+          haravointi. Valitse lähde, anna hakusanat ja enimmäismäärä.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Lähde</th><th>Kattaa</th><th>Hakusanat</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Finna</td><td>Theseuksen opinnäytetyöt ja yliopistojen julkaisuarkistot</td><td>Pakolliset</td></tr>
+              <tr><td>Theseus</td><td>AMK-opinnäytetyöt suoraan lähteestä</td><td>Valinnaiset</td></tr>
+              <tr><td>research.fi</td><td>Kansallinen tutkimustietovaranto</td><td>Pakolliset</td></tr>
+              <tr><td>CSV</td><td>Oma hanke- ja opinnäytetyöhistoria</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Ajoloki näkyy paneelin alla: montako kohdetta haettiin, montako oli uusia ja
+          montako päivittyi. Sama kohde tunnistetaan uudelleensynkronoinnissa, joten
+          rivit eivät monistu.
+        </p>
+
+        <div class="note warn">
+          <span class="note-label">Theseuksen erityispiirre</span>
+          <p>
+            Theseus-haravointi tuo <em>viimeksi muuttuneet</em> tietueet, ei uusimpia
+            opinnäytetöitä. Mukana tulee siis myös vanhoja töitä, jotka on hiljattain
+            indeksoitu uudelleen.
+          </p>
+        </div>
+
+        <h3>CSV-tuonti</h3>
+        <p>Sarakkeet otsikkorivillä, järjestys vapaa:</p>
+        <pre><code>tyyppi;otsikko;tiivistelma;tekijat;vuosi;url;avainsanat;toimialat
+opinnäytetyö;Hitsausrobotiikka;Selvitys robotisoinnista;Virtanen, Anna;2024;https://…;hitsaus,robotiikka;Tekniikka</code></pre>
+        <p>
+          Useat tekijät erotellaan pystyviivalla:
+          <code>Virtanen, Anna|Nieminen, Simo</code>. Erotin tunnistetaan
+          otsikkoriviltä automaattisesti — puolipiste, pilkku tai sarkain käyvät.
+        </p>
+
+        <h3>Ilmoitusajo</h3>
+        <p>
+          Asetukset-sivulla on pääkäyttäjälle <strong>Ilmoitusajo</strong>-paneeli,
+          joka käy läpi lähestyvät ja ohitetut määräpäivät ja lähettää jonossa olevat
+          viestit. Tuotannossa sama ajetaan ajastimelta kerran vuorokaudessa:
+        </p>
+        <pre><code>curl -X POST \
+  -H "x-notifications-secret: $NOTIFICATIONS_RUN_SECRET" \
+  https://sip.example.fi/api/notifications/run</code></pre>
+        <p>
+          Viikkokoonti lähtee kun pyynnön rungossa on <code>{"digest": true}</code>.
+          Sama muistutus ei lähde kahdesti samana päivänä.
+        </p>
+
+        <h3>Tietopankin siivous</h3>
+        <p>
+          Ylläpitäjä voi merkitä kohteen <strong>vahvistetuksi</strong> — se saa pienen
+          nostona hauissa — tai <strong>arkistoida</strong> sen. Arkistointi säilyttää
+          historian: aiemmat kytkennät signaaleihin jäävät voimaan, mutta kohde ei
+          enää nouse ehdotuksissa.
+        </p>
+      </section>
+
+      <!-- ── Tietosuoja ─────────────────────────────────────────────── -->
+      <section id="tietosuoja">
+        <h2>Tietosuoja</h2>
+
+        <p>Järjestelmässä on kolme periaatetta, jotka pätevät poikkeuksetta:</p>
+
+        <ol>
+          <li>
+            <strong>Luottamuksellinen aineisto käsitellään paikallisesti.</strong>
+            Luottamuksellinen, henkilötieto ja organisaation sisäinen luokitus pakottavat
+            paikallisen tekoälymallin. Pilvimalli edellyttää lisäksi organisaation
+            nimenomaista lupaa.
+          </li>
+          <li>
+            <strong>Signaalin teksti ei lähde koneelta.</strong> Ulkoiset lähteet
+            haravoidaan ylläpitäjän antamilla hakusanoilla omaan kantaan, ja signaalien
+            haku tehdään aina paikallisesti tätä kantaa vastaan.
+          </li>
+          <li>
+            <strong>Luokitus voittaa näkyvyyden.</strong> Luottamuksellista aineistoa ei
+            näytetä oman organisaation ulkopuolelle, vaikka näkyvyydeksi olisi valittu
+            julkinen.
+          </li>
+        </ol>
+
+        <p>
+          Kun ratkaistu signaali viedään tietopankkiin, luottamukselliseksi luokiteltu
+          aineisto rajataan automaattisesti vain oman organisaation näkyviin.
+        </p>
+      </section>
+
+      <!-- ── UKK ────────────────────────────────────────────────────── -->
+      <section id="ukk">
+        <h2>Usein kysyttyä</h2>
+
+        <h3>Tietopankki ei ehdota mitään</h3>
+        <p>
+          Todennäköisin syy on että pankki on tyhjä tai signaalin kuvaus on liian
+          lyhyt. Kirjoita kuvaukseen muutama lause lisää, aja tekoälyanalyysi (sen
+          avainsanat parantavat hakua) ja paina <strong>Hae uudelleen</strong>.
+          Ylläpitäjä voi täydentää pankkia haravoimalla.
+        </p>
+
+        <h3>Sähköpostiviestejä ei tule</h3>
+        <p>
+          Tarkista Asetukset-sivulta, että ilmoitukset ovat päällä. Jos sivun
+          alalaidassa lukee että sähköpostia ei ole määritetty, ylläpitäjän täytyy
+          asettaa SMTP-tiedot. Viestit kirjautuvat siihen asti järjestelmään tilalla
+          <em>ohitettu</em>.
+        </p>
+
+        <h3>En näe signaalia jonka tiedän olevan olemassa</h3>
+        <p>
+          Signaali on todennäköisesti rajattu toiseen organisaatioon tai merkitty
+          yksityiseksi. Pyydä kirjaajaa muuttamaan näkyvyyttä tai liittämään
+          organisaatiosi signaaliin.
+        </p>
+
+        <h3>Sama havainto on kirjattu kahdesti</h3>
+        <p>
+          Avaa kaksoiskappale ja liitä sen sisältö alkuperäiseen kommenttina, sitten
+          arkistoi kaksoiskappale. Jatkossa kaksoiskappalevaroitus otsikkokentän alla
+          auttaa huomaamaan tilanteen ajoissa.
+        </p>
+
+        <h3>Tekoälyanalyysi epäonnistui</h3>
+        <p>
+          Ilmoitus tarkoittaa yleensä että paikallinen tekoälypalvelin ei vastaa.
+          Ylläpitäjä näkee Asetukset-sivulta, mihin osoitteeseen järjestelmä yrittää
+          ottaa yhteyttä. Signaali säilyy ja analyysin voi ajaa uudelleen.
+        </p>
+      </section>
+
+      <footer class="colophon">
+        <p>
+          SIP — Signal Intelligence Platform · Käyttöopas<br>
+          Tekninen dokumentaatio ja ympäristömuuttujat: <span class="mono">README.md</span>
+        </p>
+
+        <p class="brand">
+          <span class="dot" aria-hidden="true"></span>
+          <a href="https://jari.urpilainen.fi/fi/projects/ictu" target="_blank" rel="noopener noreferrer">ICTU</a>
+          <span class="author">Jari Urpilainen</span>
+        </p>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+</body>
+</html>
